@@ -1,10 +1,13 @@
-function formatLocalTime(isoString) {
+function formatCompactTime(isoString) {
   const date = new Date(isoString);
-  return date.toLocaleTimeString([], {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
-  });
+  let hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'p' : 'a';
+
+  hours = hours % 12;
+  hours = hours === 0 ? 12 : hours;
+
+  return `${hours}:${minutes}${ampm}`;
 }
 
 const inHg = hPa => hPa * 0.02953;
