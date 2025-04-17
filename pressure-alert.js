@@ -36,14 +36,36 @@ const dropEntry = todayPressures.find(p => p.pressure <= 29.8);
 const dropDetected = !!dropEntry;
 const rangeExceeded = (maxPressure - minPressure) > 0.2;
 
-if (dropDetected || rangeExceeded) {
+//
+// Determine if today's pressure is sporadic (a.k.a. 4+ direction changes).
+//
+let directionChanges = 0;
+let lastDirection = null;
+
+for (let i = 1; i < todayPressures.length; i++) {
+  const delta = todayPressures[i].pressure - todayPressures[i - 1].pressure;
+  const direction = delta > 0 ? 'up' : delta < 0 ? 'down' : lastDirection;
+
+  if (direction && lastDirection && direction !== lastDirection) {
+    directionChanges++;
+  }
+
+  if (direction) lastDirection = direction;
+}
+
+const pressureIsSporadic = directionChanges >= 4;
+
+if (dropDetected || rangeExceeded || pressureIsSporadic) {
   const body = [];
 
   if (dropDetected) {
     if (dropEntry.hour < currentHour) {
-      body.push(`Pressure has already dropped ≤ 29.8 inHg today.`);
+      const recentEntry = [...todayPressures].reverse().find(p => p.hour <= currentHour && p.pressure <= 29.8);
+      const aoTime = recentEntry ? recentEntry.time : dropEntry.time;
+      
+      body.push(`Pressure is already ≤ 29.8 inHg today (a/o ${aoTime}).`);
     } else {
-      body.push(`Pressure will be ≤ 29.8 inHg around ${dropEntry.time}.`);
+      body.push(`Pressure will drop ≤ 29.8 inHg around ${dropEntry.time}.`);
     }
   }
 
@@ -51,16 +73,29 @@ if (dropDetected || rangeExceeded) {
     body.push(`Expect changes ≥ 0.2 inHg (H: ${maxPressure.toFixed(2)}, L: ${minPressure.toFixed(2)}).`);
   }
 
+  if (pressureIsSporadic) {
+    body.push(`Pressure will change direction ${directionChanges} times today.`)
+  }
+
   body.push(`\nSee more at https://www.windy.com/-Pressure-pressure?pressure,${lat},${lon},6.`);
 
   //
+  // Determine a good title and output content for a notification.
   //
-  //
+  const title = pressureIsSporadic
+    ? "😵‍💫 Pressure is All Over the Place Today"
+    : "📉 Pressure Dropping Critically Today";
+  
   const output = {
     notification: {
-      title: "Critical Pressure Drops Today!",
+      title: title,
       body: body.join("\n"),
       attachment: null
+    },
+    meta: {
+      dropDetected,
+      rangeExceeded,
+      pressureIsSporadic
     }
   };
   
