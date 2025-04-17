@@ -73,11 +73,11 @@ if (dropDetected || rangeExceeded || pressureIsSporadic) {
   if (dropDetected) {
     if (dropEntry.hour < currentHour) {
       const recentEntry = [...todayPressures].reverse().find(p => p.hour <= currentHour && p.pressure <= 29.8);
-      const aoTime = formatLocalTime(`${today}T${recentEntry ? recentEntry.time : dropEntry.time}`);
+      const aoTime = formatCompactTime(`${today}T${recentEntry ? recentEntry.time : dropEntry.time}`);
       
       body.push(`Pressure is already ≤ 29.8 inHg today (a/o ${aoTime}).`);
     } else {
-      dropTime = formatLocalTime(`${today}T${dropEntry.time}`);
+      dropTime = formatCompactTime(`${today}T${dropEntry.time}`);
       
       body.push(`Pressure will drop ≤ 29.8 inHg around ${dropTime}.`);
     }
