@@ -51,6 +51,8 @@ if (dropDetected || rangeExceeded) {
     body.push(`Expect changes ≥ 0.2 inHg (H: ${maxPressure.toFixed(2)}, L: ${minPressure.toFixed(2)}).`);
   }
 
+  body.push(`\nSee more at https://www.windy.com/-Pressure-pressure?pressure,${lat},${lon},6.`);
+
   //
   //
   //
