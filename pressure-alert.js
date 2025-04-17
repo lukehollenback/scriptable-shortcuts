@@ -37,9 +37,6 @@ const dropDetected = !!dropEntry;
 const rangeExceeded = (maxPressure - minPressure) > 0.2;
 
 if (dropDetected || rangeExceeded) {
-  const n = new Notification();
-  n.title = "Pressure Alert";
-
   const body = [];
 
   if (dropDetected) {
@@ -54,19 +51,16 @@ if (dropDetected || rangeExceeded) {
     body.push(`Pressure changes more than 0.2 inHg:\nHigh: ${maxPressure.toFixed(2)}\nLow: ${minPressure.toFixed(2)}`);
   }
 
-  n.body = body.join("\n\n");
-
-  // Windy.com pressure layer link (zoom level 6)
-  n.openURL = `https://www.windy.com/-Pressure-pressure?pressure,${lat},${lon},6`;
-
-  //await n.schedule();
+  //
+  //
+  //
+  const output = {
+    notification: {
+      title: "Pressure Alert",
+      body: body.join("\n"),
+      attachment: `https://www.windy.com/-Pressure-pressure?pressure,${lat},${lon},6`
+    }
+  };
+  
+  Script.setShortcutOutput(JSON.stringify(output));
 }
-
-const output = {
-  notification: {
-    title: "Testing",
-    body: "Content"
-  }
-};
-
-Script.setShortcutOutput(JSON.stringify(output));
