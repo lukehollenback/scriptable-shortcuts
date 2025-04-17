@@ -1,3 +1,8 @@
+function formatLocalTime(isoString) {
+  const date = new Date(isoString);
+  return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+}
+
 const inHg = hPa => hPa * 0.02953;
 const location = await Location.current();
 const lat = location.latitude.toFixed(3);
@@ -61,11 +66,13 @@ if (dropDetected || rangeExceeded || pressureIsSporadic) {
   if (dropDetected) {
     if (dropEntry.hour < currentHour) {
       const recentEntry = [...todayPressures].reverse().find(p => p.hour <= currentHour && p.pressure <= 29.8);
-      const aoTime = recentEntry ? recentEntry.time : dropEntry.time;
+      const aoTime = formatLocalTime(`${today}T${recentEntry ? recentEntry.time : dropEntry.time}`);
       
       body.push(`Pressure is already ≤ 29.8 inHg today (a/o ${aoTime}).`);
     } else {
-      body.push(`Pressure will drop ≤ 29.8 inHg around ${dropEntry.time}.`);
+      dropTime = formatLocalTime(`${today}T${dropEntry.time}`);
+      
+      body.push(`Pressure will drop ≤ 29.8 inHg around ${dropTime}.`);
     }
   }
 
