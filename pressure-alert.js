@@ -62,9 +62,11 @@ if (dropDetected || rangeExceeded) {
   await n.schedule();
 }
 
-Script.setShortcutOutput(JSON.stringify({
+const output = {
   notification: {
     title: "Testing",
     body: "Content"
   }
-}));
+};
+
+Script.setShortcutOutput(JSON.stringify(output));
