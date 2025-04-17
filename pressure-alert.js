@@ -98,7 +98,7 @@ if (dropDetected || rangeExceeded || pressureIsSporadic) {
       if (isCurrentlyLow) {
         body.push(`Pressure is currently ≤ 29.8 inHg (a/o ${lastLowTime || firstLowTime}).`);
       } else if (lastLowEntry) {
-        body.push(`Pressure dropped ≤ 29.8 inHg earlier (a/o ${firstLowTime}), but is now above that (a/o ${currentTimeFormatted}).`);
+        body.push(`Pressure dropped ≤ 29.8 inHg at ${firstLowTime}, but is now back up (a/o ${currentTimeFormatted}).`);
       } else {
         body.push(`Pressure will drop ≤ 29.8 inHg around ${firstLowTime}.`);
       }
@@ -110,25 +110,21 @@ if (dropDetected || rangeExceeded || pressureIsSporadic) {
   }
 
   if (rangeExceeded) {
-    body.push(`Expect changes ≥ 0.2 inHg (H: ${maxPressure.toFixed(2)}, L: ${minPressure.toFixed(2)}).`);
+    body.push(`Expect changes ≥ 0.2 inHg (↑${maxPressure.toFixed(2)}, ↓${minPressure.toFixed(2)}).`);
   }
 
   if (pressureIsSporadic) {
-    body.push(`Pressure will change direction ${directionChanges} times today.`)
+    body.push(`Direction changes ${directionChanges} times today.`)
   }
 
-  body.push(`\nCurrent pressure is ${currentEntry.pressure} inHg.`);
-
-  body.push(`\nSee more at https://www.windy.com/-Pressure-pressure?pressure,${lat},${lon},6.`);
-
-  body.push(`\nData retrieved from https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=pressure_msl&timezone=auto. Current hour is ${currentHour}.`);
+  body.push(`\nCurrent pressure is ${currentEntry.pressure} inHg. See more at https://www.windy.com/-Pressure-pressure?pressure,${lat},${lon},6.`);
 
   //
   // Determine a good title and output content for a notification.
   //
   const title = pressureIsSporadic
-    ? "😵‍💫 Pressure is All Over the Place Today"
-    : "📉 Pressure Dropping Critically Today";
+    ? "😵‍💫 All Over the Place Today"
+    : "📉 Dropping Critically Today";
   
   const output = {
     notification: {
