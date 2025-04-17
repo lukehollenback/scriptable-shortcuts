@@ -121,6 +121,8 @@ if (dropDetected || rangeExceeded || pressureIsSporadic) {
 
   body.push(`\nSee more at https://www.windy.com/-Pressure-pressure?pressure,${lat},${lon},6.`);
 
+  body.push(`\nData retrieved from https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=pressure_msl&timezone=auto. Current hour is ${currentHour}.`);
+
   //
   // Determine a good title and output content for a notification.
   //
