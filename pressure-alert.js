@@ -1,3 +1,10 @@
+/**
+ * Pressure Alert
+ * © 2025 Luke Hollenback — All rights reserved.
+ * 
+ * Fetches hourly atmospheric pressure data and determines if changes are occuring that might impact sensitive individuals.
+ */
+
 function formatCompactTime(isoString) {
   const date = new Date(isoString);
   let hours = date.getHours();
@@ -69,13 +76,32 @@ const pressureIsSporadic = directionChanges >= 4;
 
 if (dropDetected || rangeExceeded || pressureIsSporadic) {
   const body = [];
+  const currentEntry = todayPressures.find(p => p.hour === currentHour);
 
   if (dropDetected) {
     if (dropEntry.hour < currentHour) {
-      const recentEntry = [...todayPressures].reverse().find(p => p.hour <= currentHour && p.pressure <= 29.8);
-      const aoTime = formatCompactTime(`${today}T${recentEntry ? recentEntry.time : dropEntry.time}`);
+      // Find when it first dropped below threshold
+      const firstLowEntry = todayPressures.find(p => p.pressure <= 29.8);
+      const firstLowTime = firstLowEntry ? formatCompactTime(`${today}T${firstLowEntry.time}`) : null;
       
-      body.push(`Pressure is already ≤ 29.8 inHg today (a/o ${aoTime}).`);
+      // Find most recent entry at or before now
+      
+      const isCurrentlyLow = currentEntry && currentEntry.pressure <= 29.8;
+      
+      // Find last time it was still low
+      const lastLowEntry = [...todayPressures].reverse().find(p => p.hour <= currentHour && p.pressure <= 29.8);
+      const lastLowTime = lastLowEntry ? formatCompactTime(`${today}T${lastLowEntry.time}`) : null;
+      
+      // Format current time
+      const currentTimeFormatted = currentEntry ? formatCompactTime(`${today}T${currentEntry.time}`) : null;
+      
+      if (isCurrentlyLow) {
+        body.push(`Pressure is currently ≤ 29.8 inHg (a/o ${lastLowTime || firstLowTime}).`);
+      } else if (lastLowEntry) {
+        body.push(`Pressure dropped ≤ 29.8 inHg earlier (a/o ${firstLowTime}), but is now above that (a/o ${currentTimeFormatted}).`);
+      } else {
+        body.push(`Pressure will drop ≤ 29.8 inHg around ${firstLowTime}.`);
+      }
     } else {
       dropTime = formatCompactTime(`${today}T${dropEntry.time}`);
       
@@ -90,6 +116,8 @@ if (dropDetected || rangeExceeded || pressureIsSporadic) {
   if (pressureIsSporadic) {
     body.push(`Pressure will change direction ${directionChanges} times today.`)
   }
+
+  body.push(`\nCurrent pressure is ${currentEntry.pressure} inHg.`);
 
   body.push(`\nSee more at https://www.windy.com/-Pressure-pressure?pressure,${lat},${lon},6.`);
 
