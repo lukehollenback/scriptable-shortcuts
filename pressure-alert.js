@@ -1,6 +1,10 @@
 function formatLocalTime(isoString) {
   const date = new Date(isoString);
-  return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  return date.toLocaleTimeString([], {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
 }
 
 const inHg = hPa => hPa * 0.02953;
