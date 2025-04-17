@@ -59,7 +59,7 @@ if (dropDetected || rangeExceeded) {
   // Windy.com pressure layer link (zoom level 6)
   n.openURL = `https://www.windy.com/-Pressure-pressure?pressure,${lat},${lon},6`;
 
-  await n.schedule();
+  //await n.schedule();
 }
 
 const output = {
