@@ -61,3 +61,10 @@ if (dropDetected || rangeExceeded) {
 
   await n.schedule();
 }
+
+setShortcutOutput({
+  notification: {
+    title: "Testing",
+    body: "Content"
+  }
+});
