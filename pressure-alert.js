@@ -43,12 +43,12 @@ if (dropDetected || rangeExceeded) {
     if (dropEntry.hour < currentHour) {
       body.push(`Pressure has already dropped ≤ 29.8 inHg today.`);
     } else {
-      body.push(`Pressure will drop to ≤ 29.8 inHg around ${dropEntry.time}.`);
+      body.push(`Pressure will be ≤ 29.8 inHg around ${dropEntry.time}.`);
     }
   }
 
   if (rangeExceeded) {
-    body.push(`Expect pressure changes ≥ 0.2 inHg (${maxPressure.toFixed(2)} – ${minPressure.toFixed(2)}).`);
+    body.push(`Expect changes ≥ 0.2 inHg (H: ${maxPressure.toFixed(2)}, L: ${minPressure.toFixed(2)}).`);
   }
 
   //
